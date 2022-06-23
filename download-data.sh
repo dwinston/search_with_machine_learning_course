@@ -1,4 +1,6 @@
-cd /workspace/datasets
+DATASETS_ROOT="/Users/dwinston/datasets/search_with_ml"
+
+cd $DATASETS_ROOT
 # TODO: put in validation checks
 #pip install kaggle
 echo "Downloading Kaggle"

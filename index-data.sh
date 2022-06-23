@@ -7,13 +7,16 @@ usage()
   exit 2
 }
 
-ANNOTATIONS_JSON_FILE="/workspace/search_with_machine_learning_course/conf/bbuy_annotations.json"
-PRODUCTS_JSON_FILE="/workspace/search_with_machine_learning_course/conf/bbuy_products.json"
-QUERIES_JSON_FILE="/workspace/search_with_machine_learning_course/conf/bbuy_queries.json"
-DATASETS_DIR="/workspace/datasets"
-PYTHON_LOC="/workspace/search_with_machine_learning_course/utilities"
+REPO_ROOT="/Users/dwinston/Dropbox/repos/dwinston/search_with_machine_learning_course"
+DATASETS_ROOT="/Users/dwinston/datasets/search_with_ml"
 
-LOGS_DIR="/workspace/logs"
+ANNOTATIONS_JSON_FILE="${REPO_ROOT}/conf/bbuy_annotations.json"
+PRODUCTS_JSON_FILE="${REPO_ROOT}/conf/bbuy_products.json"
+QUERIES_JSON_FILE="${REPO_ROOT}/conf/bbuy_queries.json"
+DATASETS_DIR="${DATASETS_ROOT}"
+PYTHON_LOC="${REPO_ROOT}/utilities"
+
+LOGS_DIR="${DATASETS_ROOT}/logs"
 ANNOTATE=""
 while getopts ':p:a:q:g:y:d:hrn' c
 do
