@@ -7,6 +7,7 @@ gui:
 ltr-end-to-end:
 	./ltr-end-to-end.sh -y \
 		-m 0 \
+		-c quantiles \
 		-s /Users/dwinston/Dropbox/repos/dwinston/search_with_machine_learning_course \
 		-o /Users/dwinston/ltr_output \
 		-a /Users/dwinston/datasets/search_with_ml/train.csv
