@@ -17,7 +17,7 @@ POST _scripts/ltr_log_template
             },
             {
               "sltr": {
-                "_name": "logged_featureset",
+                "_name": "logged_featureset"
                 "featureset": "bbuy_main_featureset",
                 "store": "week1",
                 "params": {

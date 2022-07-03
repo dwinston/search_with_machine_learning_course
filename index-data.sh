@@ -11,8 +11,8 @@ REPO_ROOT="/Users/dwinston/Dropbox/repos/dwinston/search_with_machine_learning_c
 DATASETS_ROOT="/Users/dwinston/datasets/search_with_ml"
 
 ANNOTATIONS_JSON_FILE="${REPO_ROOT}/conf/bbuy_annotations.json"
-PRODUCTS_JSON_FILE="${REPO_ROOT}/conf/bbuy_products.json"
-QUERIES_JSON_FILE="${REPO_ROOT}/conf/bbuy_queries.json"
+PRODUCTS_JSON_FILE="${REPO_ROOT}/week2/conf/bbuy_products.json"
+QUERIES_JSON_FILE="${REPO_ROOT}/week2/conf/bbuy_queries.json"
 DATASETS_DIR="${DATASETS_ROOT}"
 PYTHON_LOC="${REPO_ROOT}/utilities"
 
