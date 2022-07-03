@@ -3,11 +3,14 @@ wget https://dl.fbaipublicfiles.com/fasttext/data/cooking.stackexchange.tar.gz
 tar xvzf cooking.stackexchange.tar.gz
 
 # Split labeled data into training and test.
-head -n -3000 cooking.stackexchange.txt > cooking.train
+head -12404 cooking.stackexchange.txt > cooking.train
 tail -3000 cooking.stackexchange.txt > cooking.test
 
 # Train model
 ~/fastText-0.9.2/fasttext supervised -input cooking.train -output model_cooking
+
+# Test interatively
+# ~/fastText-0.9.2/fasttext predict model_cooking.bin -
 
 # Test model for P@1 and R@1
 ~/fastText-0.9.2/fasttext test model_cooking.bin cooking.test
@@ -17,8 +20,8 @@ tail -3000 cooking.stackexchange.txt > cooking.test
 
 # Preprocess the text and recreate the training and test data
 cat cooking.stackexchange.txt | sed -e "s/\([.\!?,'/()]\)/ \1 /g" | tr "[:upper:]" "[:lower:]" > cooking.preprocessed.txt
-head -n -3000 cooking.preprocessed.txt > cooking.train
-tail -n 3000 cooking.preprocessed.txt > cooking.test
+head -12404 cooking.preprocessed.txt > cooking.train
+tail -3000 cooking.preprocessed.txt > cooking.test
 
 # Train and test again
 ~/fastText-0.9.2/fasttext supervised -input cooking.train -output model_cooking
@@ -40,8 +43,9 @@ tail -n 3000 cooking.preprocessed.txt > cooking.test
 ~/fastText-0.9.2/fasttext supervised -input cooking.train -output model_cooking -lr 1.0 -epoch 25 -wordNgrams 2
 ~/fastText-0.9.2/fasttext test model_cooking.bin cooking.test
 
-
-
+# Account for bigrams
+~/fastText-0.9.2/fasttext supervised -input cooking.train -output model_cooking -lr 1.0 -epoch 25 -wordNgrams 2
+~/fastText-0.9.2/fasttext test model_cooking.bin cooking.test
 
 
 

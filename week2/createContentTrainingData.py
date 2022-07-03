@@ -12,12 +12,12 @@ def transform_name(product_name):
     return product_name
 
 # Directory for product data
-directory = r'/workspace/datasets/product_data/products/'
+directory = r'/Users/dwinston/datasets/search_with_ml/product_data/products'
 
 parser = argparse.ArgumentParser(description='Process some integers.')
 general = parser.add_argument_group("general")
 general.add_argument("--input", default=directory,  help="The directory containing product data")
-general.add_argument("--output", default="/workspace/datasets/fasttext/output.fasttext", help="the file to output to")
+general.add_argument("--output", default="/Users/dwinston/datasets/search_with_ml/fasttext/output.fasttext", help="the file to output to")
 general.add_argument("--label", default="id", help="id is default and needed for downsteam use, but name is helpful for debugging")
 
 # Consuming all of the product data, even excluding music and movies,
