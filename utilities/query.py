@@ -1,17 +1,29 @@
 # A simple client for querying driven by user input on the command line.  Has hooks for the various
 # weeks (e.g. query understanding).  See the main section at the bottom of the file
+from itertools import accumulate
+
 from opensearchpy import OpenSearch
 import warnings
+
 warnings.filterwarnings("ignore", category=FutureWarning)
 import argparse
 import json
 import os
+import re
 from getpass import getpass
 from urllib.parse import urljoin
 import pandas as pd
+import fasttext
 import fileinput
 import logging
 
+import nltk
+stemmer = nltk.stem.snowball.SnowballStemmer("english")
+
+
+DATASETS_DIR = "/Users/dwinston/datasets/search_with_ml"
+
+query_model = fasttext.load_model(f"{DATASETS_DIR}/model_queries.bin")
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -186,12 +198,43 @@ def create_query(user_query, click_prior_query, filters, sort="_score", sortDir=
         query_obj["_source"] = source
     return query_obj
 
+# Note: Same as week3.create_labeled_queries.normalize, but can't import.
+def normalize(query):
+    rv = query.lower()
+    # strip quotation marks
+    rv = rv.replace('"', '').replace("'", "")
+    # treat anything that’s not a number or letter as a space
+    rv = "".join(c if c.isalnum() else " " for c in rv)
+    # trim multiple spaces to a single space
+    rv = re.sub(r"\s{2,}", " ", rv)
+    # stem
+    rv = " ".join(map(stemmer.stem, rv.split(" ")))
+    return rv
 
 def search(client, user_query, index="bbuy_products", sort="_score", sortDir="desc", synonyms=False):
     #### W3: classify the query
+    # Test single prediction
+    normalized_user_query = normalize(user_query)
+    predicted = query_model.predict(normalized_user_query, k=10)
+    predicted_category = {
+        "values": [v.replace("__label__", "") for v in predicted[0]],
+        "scores": [float(s) for s in predicted[1]],
+    }
+    print("user query:", user_query)
+    print("normalized query:", normalized_user_query)
     #### W3: create filters and boosts
+    filters = None
+    cumulative_scores = list(accumulate(predicted_category["scores"]))
+    predicted_category_cutoff = next(
+        (i for i, av in enumerate(cumulative_scores) if av >= 0.5)
+        , None)
+    if predicted_category_cutoff is not None:
+        path_ids = predicted_category["values"][:(predicted_category_cutoff + 1)]
+        print("predicted categories:", path_ids)
+        print("cumulative score:", cumulative_scores[predicted_category_cutoff])
+        filters = [{"terms": {"categoryPathIds.keyword": path_ids}}]
     # Note: you may also want to modify the `create_query` method above
-    query_obj = create_query(user_query, click_prior_query=None, filters=None, sort=sort, sortDir=sortDir, source=["name", "shortDescription"], synonyms=synonyms)
+    query_obj = create_query(user_query, click_prior_query=None, filters=filters, sort=sort, sortDir=sortDir, source=["name", "shortDescription"], synonyms=synonyms)
     logging.info(query_obj)
     response = client.search(query_obj, index=index)
     if response and response['hits']['hits'] and len(response['hits']['hits']) > 0:
@@ -249,7 +292,7 @@ if __name__ == "__main__":
         query = line.rstrip()
         if query == "Exit":
             break
-        search(client=opensearch, user_query=query, index=index_name, synonyms=args.synonyms)
+        search(client=opensearch, user_query=query, index=index_name, synonyms=args.synonyms, sort="salesRankLongTerm")
 
         print(query_prompt)
 
